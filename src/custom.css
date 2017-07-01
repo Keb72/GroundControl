@@ -1,0 +1,28 @@
+.sidebar.bottom {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 150px;
+    background: black;
+}
+
+
+.sidebars > .sidebar {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.64);
+    position: fixed;
+    color: white;
+    font-size: 1em;
+    text-align: left;
+    font-family: "Arial";
+}
+
+.set{
+	float: left;
+	margin-left: 50px;
+}
+
+h1{
+	font-size: 20px;
+	font-family: "Arial";
+	text-align: center;
+}

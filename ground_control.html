@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>KSP ground control</title>
+<script type="text/javascript">
+var url = window.location.href
+var arr = url.split("/");
+var resultip = arr[2];
+var mode = 0
+var curve = 0
+</script>
+<script type="text/javascript" src="src/jquery-1.11.3.min.js"></script> 
+<script type="text/javascript" src="src/jquery.canvasjs.min.js"></script> 
+<script src="src/telecom.js"></script>
+<script src="src/orbital_calculation.js"></script>
+<script src="src/flight_calc.js"></script>
+<script src="src/groundtracks.js"></script>
+<script src="src/flightcontrol.js"></script>
+        <link href="src/custom.css" rel="stylesheet">
+        <script src="src/jquery.sidebar.js"></script>
+        <script src="src/handlers.js"></script>
+        <link rel="stylesheet" href="src/graph.css">
+<script type="text/javascript">
+$(".sidebar.bottom").sidebar({side: "bottom"});
+function applyFunction(){
+	//quality = $('input[name="quality"]:checked').val();
+	map_type = $('input[name="map_type"]:checked').val();
+	$(".sidebar.bottom").trigger("sidebar:close");
+	nb_curve = Number(document.getElementById("nb_curve").value)-1;
+	calc_step = Number(document.getElementById("calc_step").value);
+	past_traj = Number(document.getElementById("past_traj").value);
+};
+	
+function cancelFunction(){
+	//$("#"+quality).prop("checked", true)
+	$(".sidebar.bottom").trigger("sidebar:close");
+	document.getElementById("nb_curve").value = nb_curve+1;
+	document.getElementById("calc_step").value=calc_step;
+	document.getElementById("past_traj").value=past_traj;
+};
+
+$(document).ready(function(){
+	
+	document.getElementById("nb_curve").value = nb_curve+1;
+	document.getElementById("calc_step").value=calc_step;
+	document.getElementById("past_traj").value=past_traj;
+	
+function sequenceCheck(){
+	pos = groundTracks();
+		if (pos<0){
+			flightControl();
+		}else{
+			groundTracks();}
+		};
+sequenceCheck();
+});
+function modeChange(){
+	if(document.getElementById("mode").innerHTML == "Auto"){
+		document.getElementById("mode").innerHTML = "Ground tracks";
+		mode = 1;
+	}else{
+		if(document.getElementById("mode").innerHTML == "Ground tracks"){
+			document.getElementById("mode").innerHTML = "Flight control"
+			mode = 2;
+		}else{
+			document.getElementById("mode").innerHTML = "Auto"
+			mode = 0
+		}
+	}
+
+}
+</script>
+
+</head>
+<body>
+<div class=hud id=hudcontainer>
+
+	<div class="hudmode">
+		<button onclick="modeChange()">Display mode</button>
+		<div id="mode">Auto</div>
+	</div>
+
+	<div id="hudA1" class="hudn">
+		<div id="hud1n"> HUD1 </div>
+		<div id="hud2n"> HUD2 </div>
+	</div>
+	
+	<div id="hudA2" class="hudv">
+		<div id="hud1v"> VALUE1 </div>
+		<div id="hud2v"> VALUE2 </div>
+	</div>
+	
+	<div id="hudB1" class="hudn">
+		<div id="hud3n"> HUD3 </div>
+		<div id="hud4n"> HUD4 </div>
+	</div>
+	
+	<div id="hudB2" class="hudv">
+		<div id="hud3v"> VALUE3 </div>
+		<div id="hud4v"> VALUE4 </div>
+	</div>
+	
+	<div id="hudC1" class="hudn">
+		<div id="hud5n"> HUD5 </div>
+		<div id="hud6n"> HUD6 </div>
+	</div>
+	
+	<div id="hudC2" class="hudv">
+		<div id="hud5v"> VALUE5 </div>
+		<div id="hud6v"> VALUE6 </div>
+	</div>
+	
+</div>
+
+<div id="container">
+	<div id="chartContainer"></div>
+	<img id="map" src="maps/white.png" />
+</div>
+
+<div class="button" id="settings" align="center">
+	<button onclick="$('.sidebar.bottom').trigger('sidebar:open')">Settings</button>
+</div>
+        <div class="sidebars">
+            <div class="sidebar bottom">
+            <h1>Ground Tracks Settings</h1>
+            	<div id="quality_button" class="set">
+            	<!--  
+            	Map quality<br>
+				  <input type="radio" name="quality" value="normal" id="normal" checked> Normal<br>
+				  <input type="radio" name="quality" value="high" id="high"> High
+  				</div>
+  				-->
+  				
+  				<div id="type_button" class="set">
+            	Map type<br>
+				  <input type="radio" name="map_type" value="sat" id="sat" checked> Satellite<br>
+				  <input type="radio" name="map_type" value="slope" id="slope"> Slope<br>
+				  <input type="radio" name="map_type" value="color" id="color"> Color<br>
+				  <input type="radio" name="map_type" value="biome" id="biome"> Biome
+  				</div>
+  				
+  				<div class="set">
+            	Displayed curves<br>
+				<input type="number" style="width:50px;" value="" id="nb_curve"><br><br>
+				Calculation step<br>
+				<input type="number" style="width:50px;" value="" id="calc_step">seconds
+				</div>
+				<div class="set">
+				Past trajectory<br>
+				<input type="number" style="width:50px;" value="" id="past_traj">seconds<br>
+  				</div>
+  				
+  <button type="button" onclick="applyFunction()" style="margin-left:50px">Apply</button>
+  <button type="button" onclick="cancelFunction()">Cancel</button>
+		 </div>
+        </div>
+</body>
+</html>
