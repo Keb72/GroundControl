@@ -10,13 +10,28 @@
     		var p_quality = "normal";
     		var p_map_type= "sat";
 
-			//var system=[]
-			for (n = 0; n < 17; n = n+1){
-    			url = "http://"+resultip+"/telemachus/datalink?name=b.name["+ String(n) +"]&mu=b.o.gravParameter["+ String(n) +"]&pr=b.rotationPeriod["+ String(n) +"]";
-    			$.getJSON(url, function(data, status){
-    				system.push(data);
-    				});
-    		};
+
+//			for (n = 0; n < 17; n = n+1){
+//    			url = "http://"+resultip+"/telemachus/datalink?name=b.name["+ String(n) +"]&mu=b.o.gravParameter["+ String(n) +"]&pr=b.rotationPeriod["+ String(n) +"]";
+//    			$.getJSON(url, function(data, status){
+//    				system.push(data);
+//    				});
+//    		};
+    		
+    		var jqxhr = $.getJSON("http://"+resultip+"/telemachus/datalink?size=b.number[0]", function(data, status){
+					sizeSys = data;
+			})
+				  jqxhr.done(function() {
+					n=0;
+					while (n<sizeSys.size){
+		       			url = "http://"+resultip+"/telemachus/datalink?name=b.name["+ String(n) +"]&mu=b.o.gravParameter["+ String(n) +"]&pr=b.rotationPeriod["+ String(n) +"]";
+		    			$.getJSON(url, function(data, status){
+		    					system.push(data);
+		    			})
+	        		n++
+					}
+				  })
+
     		
     		var traj = [];
 
@@ -183,20 +198,29 @@
     			p_quality=quality;
     			p_map_type=map_type;
         		map = document.getElementById("map");
-        		map.src = chemin;
-        		if(body=="Mun"||body=="Kerbin"){
-	        		document.getElementById("biome").disabled = false;
-        		}else{
-        			document.getElementById("biome").disabled = true;
-	        		}
-        		if(body=="Jool"||body=="Sun"){
-        			document.getElementById("slope").disabled = true;
-        			document.getElementById("color").disabled = true;
-        		}else{
-        			document.getElementById("slope").disabled = false;
-        			document.getElementById("color").disabled = false;
-        		}
-    		}
+        		map.src = chemin;    		
+    		
+    			var map = ["sat","slope","color","biome"]
+    			
+    			function check_map(type){
+		    		$.ajax({
+		    		    url:"maps/"+quality+"/"+body+"_"+type+".png",
+		    		    error: function()
+		    		    {
+		    		    	document.getElementById(type).disabled = true;
+//		    		    	console.log(type+" doesn't exist")
+		    		    },
+		    		    success: function()
+		    		    {
+		    		    	document.getElementById(type).disabled = false;
+//		    		    	console.log(type+" exists")
+		    		    }
+		    		});
+    			}
+    			for (i=0;i<4;i++){
+    				check_map(map[i]);
+    			};
+    		};
     		
     		if(lond<0){
     			var lonside = "W"
